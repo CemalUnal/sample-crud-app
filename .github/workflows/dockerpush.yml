@@ -1,0 +1,67 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  BACKEND_IMAGE_NAME: backend
+  FRONTEND_IMAGE_NAME: frontend
+  GATEWAY_IMAGE_NAME: gateway
+
+jobs:
+  # Push image to GitHub Package Registry.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build backend image
+        run: docker build -t backend backend
+      
+      - name: Build frontend image
+        run: docker build -t frontend frontend
+      
+      - name: Build gateway image
+        run: docker build -t gateway gateway
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          BACKEND_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$BACKEND_IMAGE_NAME
+          FRONTEND_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$FRONTEND_IMAGE_NAME
+          GATEWAY_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$GATEWAY_IMAGE_NAME
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          BACKEND_IMAGE_ID=$(echo "$BACKEND_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
+          FRONTEND_IMAGE_ID=$(echo "$FRONTEND_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
+          GATEWAY_IMAGE_ID=$(echo "$GATEWAY_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
+
+          docker tag backend $BACKEND_IMAGE_ID:$VERSION
+          docker tag frontend $FRONTEND_IMAGE_ID:$VERSION
+          docker tag gateway $GATEWAY_IMAGE_ID:$VERSION
+          docker push $BACKEND_IMAGE_ID:$VERSION
+          docker push $FRONTEND_IMAGE_ID:$VERSION
+          docker push $GATEWAY_IMAGE_ID:$VERSION

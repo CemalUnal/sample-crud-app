@@ -19,6 +19,7 @@ RUN npm run-script build
 FROM node:10.16.3-alpine
 
 RUN apk add --no-cache bash \
+    && npm config set unsafe-perm true \
     && npm install --global serve
 
 WORKDIR /app

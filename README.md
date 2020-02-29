@@ -1,5 +1,7 @@
 # Sample CRUD App
 
+![Build Status](https://github.com/CemalUnal/sample-crud-app/workflows/Docker/badge.svg?branch=master)
+
 ## Quick Start with Docker
 
 Create a network that is called `crud-app`:
