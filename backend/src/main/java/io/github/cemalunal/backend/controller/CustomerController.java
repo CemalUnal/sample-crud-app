@@ -1,49 +1,54 @@
 package io.github.cemalunal.backend.controller;
 
-
+import io.github.cemalunal.backend.aspect.LogExecutionTime;
 import io.github.cemalunal.backend.model.Customer;
+import io.github.cemalunal.backend.response.Response;
+import io.github.cemalunal.backend.response.ResponseUtil;
 import io.github.cemalunal.backend.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
+@RequestMapping("customers")
 public class CustomerController {
 
-    private Logger logger = Logger.getLogger(CustomerController.class.getName());
-
     private final CustomerService customerService;
+    private final ResponseUtil responseUtil;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, ResponseUtil responseUtil) {
         this.customerService = customerService;
+        this.responseUtil = responseUtil;
     }
 
-    @GetMapping("/customers")
-    public List<Customer> getAllCustomers() {
-        logger.info("GET ALL CUSTOMERS");
-        return customerService.getCustomers();
+    @GetMapping
+    @LogExecutionTime
+    public ResponseEntity<Response<List<Customer>>> getAllCustomers() {
+        List<Customer> customers = customerService.getCustomers();
+        Response<List<Customer>> response = responseUtil.createResponse("Successfully fetched all customers", customers);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/save")
-    public String saveCustomer(@RequestBody Customer customer) {
-        logger.info("SAVE NEW CUSTOMER " + customer.getName());
-        customerService.saveCustomer(customer);
-        return "New customer " + customer.getName() + " saved to database.";
+    @PostMapping
+    @LogExecutionTime
+    public ResponseEntity<Response<Customer>> saveCustomer(@RequestBody Customer customerRequest) {
+        Customer customer = customerService.saveCustomer(customerRequest);
+        Response<Customer> response = responseUtil.createResponse("New customer " + customer.getName() + " saved to database", customer);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete/{customerId}")
-    public String deleteCustomer(@PathVariable("customerId") String customerId) {
-        logger.info("DELETE CUSTOMER " + customerId);
+    @DeleteMapping(value = "/{customerId}")
+    @LogExecutionTime
+    public ResponseEntity<Response<String>> deleteCustomer(@PathVariable("customerId") String customerId) {
         customerService.deleteCustomer(customerId);
-        return "Customer " + customerId + " deleted.";
-    }
+        Response<String> response = responseUtil.createResponse("Customer " + customerId + " deleted", customerId);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

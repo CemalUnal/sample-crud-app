@@ -20,15 +20,13 @@ class CustomerForm extends React.Component {
       }
       event.preventDefault();
 
-      // fetch(`http://${process.env.SPRINGBOOT_DOCKER_SERVICE_HOST}:${process.env.SPRINGBOOT_DOCKER_SERVICE_PORT}/save`, {
-      fetch(`${window.env.REACT_APP_BACKEND_URI}/save`, {
+      fetch(`${window.env.REACT_APP_BACKEND_URI}/customers`, {
         method: 'post',
         body: JSON.stringify(newCustomer),
         headers: new Headers({
           'Content-Type': 'application/json'
         }),
       })
-      // .then((res) => JSON.parse(res))
       .then((res) => {
           onSubmit();
       })

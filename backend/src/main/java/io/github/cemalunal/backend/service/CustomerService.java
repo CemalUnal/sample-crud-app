@@ -21,8 +21,8 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public void saveCustomer(Customer customer) {
-        customerRepository.save(customer);
+    public Customer saveCustomer(Customer customer) {
+       return customerRepository.save(customer);
     }
 
     public void deleteCustomer(String id) {

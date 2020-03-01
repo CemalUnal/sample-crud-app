@@ -1,5 +1,5 @@
 # build environment
-FROM node:10.16.3-alpine as builder
+FROM node:12.16.1-alpine as builder
 
 # set working directory
 WORKDIR /usr/frontend/app
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run-script build
 
 # runtime environment
-FROM node:10.16.3-alpine
+FROM node:12.16.1-alpine
 
 RUN apk add --no-cache bash \
     && npm config set unsafe-perm true \

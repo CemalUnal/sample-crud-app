@@ -23,7 +23,7 @@ class DeleteCustomer extends Component {
     }
 
     handleDeleteAction = (customerId) => {
-        fetch(`${window.env.REACT_APP_BACKEND_URI}/delete/${customerId}`, {
+        fetch(`${window.env.REACT_APP_BACKEND_URI}/customers/${customerId}`, {
             method: 'DELETE',
         })
         .then((res) => {

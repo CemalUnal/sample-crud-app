@@ -57,7 +57,7 @@ class CustomerList extends Component {
                 return response.json();
             }).then((customers) => {
                 this.setState({
-                    customers: customers
+                    customers: customers.data
                 })
             })
     }
@@ -83,10 +83,6 @@ class CustomerList extends Component {
     };
 
     render() {
-        // if(this.state.customers.length === 0) {
-        //     return false;
-        // }
-
         const { classes } = this.props;
         const { customers } = this.state;
 
@@ -150,7 +146,6 @@ class CustomerList extends Component {
                             </Button>
                         </DialogActions>
                     </Dialog>
-
                 </Paper>
             </div>
         );
