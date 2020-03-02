@@ -6,6 +6,9 @@ server:
 spring:
   application:
     name: gateway
+  redis:
+    host: localhost
+    port: 6379
   zipkin:
     base-url: http://localhost:9411
 
@@ -14,3 +17,12 @@ zuul:
     backend:
       path: /simple-backend/**
       url: http://localhost:32772/
+  ratelimit:
+    enabled: true
+    repository: REDIS
+    policy-list:
+      graph:
+      - limit: 10
+        refresh-interval: 1
+        type:
+          - user

@@ -19,6 +19,16 @@ docker run -p 27017:27017 -d --network=crud-app \
             mongo:4.0.2
 ```
 
+Start a standalone Redis instance:
+```bash
+docker volume create --name redis_data
+docker run -p 6379:6379 -d --network=crud-app \
+            --name redis \
+            -v redis_data:/data \
+            --restart=on-failure \
+            redis:5.0.6
+```
+
 Start [backend](./backend):
 ```bash
 docker run -d --network=crud-app \
@@ -36,6 +46,12 @@ docker run -p 9091:80 -d --network=crud-app \
             -e SERVER_PORT=80 \
             -e SIMPLE_BACKEND_SERVICE="http://backend" \
             -e JAVA_OPTS="-Dspring.profiles.active=deployment -Dserver.port=80 -Xms125m -Xmx250m" \
+            -e REDIS_HOST="redis" \
+            -e REDIS_PORT="6379" \
+            -e RATE_LIMIT_ENABLED="true" \
+            -e RATE_LIMIT_REPOSITORY="REDIS" \
+            -e RATE_LIMIT="10" \
+            -e RATE_LIMIT_REFRESH_INTERVAL="1" \
             --restart=on-failure \
             cunal/demo-gateway:v0.0.2
 ```
