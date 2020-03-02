@@ -19,10 +19,10 @@ Api gateway configuration yaml file can be found [here](./src/main/resources/app
 Before running the gateway, you need to have Redis up and running. It is used for rate limit data storage. You can easily get a redis running in your development environment by executing the following command;
 
 ```bash
-docker volume create --name redis_data
+docker volume create --name redis_backend_volume
 docker run -p 6379:6379 -d --network=crud-app \
             --name redis \
-            -v redis_data:/data \
+            -v redis_backend_volume:/data \
             --restart=on-failure \
             redis:5.0.6
 ```

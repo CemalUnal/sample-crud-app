@@ -46,8 +46,16 @@ public class CustomerController {
     @DeleteMapping(value = "/{customerId}")
     @LogExecutionTime
     public ResponseEntity<Response<String>> deleteCustomer(@PathVariable("customerId") String customerId) {
+        Customer customer = customerService.findById(customerId);
+        Response<String> response;
+
+        if (customer == null) {
+            response = responseUtil.createResponse("Customer not found with id " + customerId, customerId);
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        }
+
         customerService.deleteCustomer(customerId);
-        Response<String> response = responseUtil.createResponse("Customer " + customerId + " deleted", customerId);
+        response = responseUtil.createResponse("Customer " + customerId + " deleted", customerId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
