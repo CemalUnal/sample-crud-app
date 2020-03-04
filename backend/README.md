@@ -33,6 +33,8 @@ Execute the following command to start Backend:
 mvn spring-boot:run
 ```
 
+Swagger UI will be available at `http://localhost:8090/swagger-ui.html`. 
+
 (OPTIONAL) You can define multiple profiles under the [src/main/resources](./src/main/resources) directory. For example:
   - `application-deployment.properties` for deployment profile
   - `application.properties` for default profile
@@ -40,10 +42,8 @@ mvn spring-boot:run
 After defining multiple profiles, you can set the active profile when running:
 
 ```bash
-mvn spring-boot:run -Dspring.profiles.active=deployment
+mvn spring-boot:run -Dspring-boot.run.profiles=deployment
 ```
-
-Swagger UI will be available at `http://localhost:8090/swagger-ui.html`. 
 
 ### Running Backend with Docker
 Build docker image:

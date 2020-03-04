@@ -15,13 +15,13 @@ spring:
 zuul:
   routes:
     backend:
-      path: /simple-backend/**
+      path: /demo-backend/**
       url: http://localhost:32772/
   ratelimit:
     enabled: true
     repository: REDIS
     policy-list:
-      graph:
+      backend:
       - limit: 10
         refresh-interval: 1
         type:

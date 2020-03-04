@@ -16,15 +16,15 @@ public class SwaggerDocumentationConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Simple Backend Service")
-                .description("Simple Backend Service with CRUD operations")
+                .title("Demo Backend Service")
+                .description("Demo Backend Service with CRUD operations")
                 .termsOfServiceUrl("")
                 .contact(new Contact("Cemal","cemalunal.github.io", "cemalunal@yahoo.com"))
                 .build();
     }
 
     @Bean
-    public Docket simpleBackendApi() {
+    public Docket demoBackendApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("io.github.cemalunal.backend.controller"))
