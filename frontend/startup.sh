@@ -15,4 +15,5 @@ done
 echo "}" >> $env_config_location
 
 echo "Running... "
-exec serve -l $SERVER_PORT -s build
+# exec serve -l $SERVER_PORT -s build
+exec serve -l 80 -s build

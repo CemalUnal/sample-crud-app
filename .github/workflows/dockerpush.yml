@@ -1,4 +1,4 @@
-name: Docker
+name: Build and Run
 
 on:
   push:
@@ -14,13 +14,14 @@ on:
   pull_request:
 
 env:
-  BACKEND_IMAGE_NAME: backend
-  FRONTEND_IMAGE_NAME: frontend
-  GATEWAY_IMAGE_NAME: gateway
+  BACKEND_IMAGE_NAME: demo-backend
+  FRONTEND_IMAGE_NAME: demo-frontend
+  GATEWAY_IMAGE_NAME: demo-gateway
+  AZURE_WEBAPP_BACKEND_NAME: azure-demo-backend
+  AZURE_WEBAPP_FRONTEND_NAME: azure-demo-frontend
+  AZURE_WEBAPP_GATEWAY_NAME: azure-demo-gateway
 
 jobs:
-  # Push image to GitHub Package Registry.
-  # See also https://docs.docker.com/docker-hub/builds/
   push:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -28,23 +29,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Log into registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Build backend image
-        run: docker build -t backend backend
+        run: docker build -t demo-backend backend
       
       - name: Build frontend image
-        run: docker build -t frontend frontend
+        run: docker build -t demo-frontend frontend
       
       - name: Build gateway image
-        run: docker build -t gateway gateway
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: docker build -t demo-gateway gateway
 
       - name: Push image
         run: |
-          BACKEND_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$BACKEND_IMAGE_NAME
-          FRONTEND_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$FRONTEND_IMAGE_NAME
-          GATEWAY_IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$GATEWAY_IMAGE_NAME
+          BACKEND_IMAGE_ID=cunal/$BACKEND_IMAGE_NAME
+          FRONTEND_IMAGE_ID=cunal/$FRONTEND_IMAGE_NAME
+          GATEWAY_IMAGE_ID=cunal/$GATEWAY_IMAGE_NAME
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
@@ -59,9 +60,39 @@ jobs:
           FRONTEND_IMAGE_ID=$(echo "$FRONTEND_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
           GATEWAY_IMAGE_ID=$(echo "$GATEWAY_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
 
-          docker tag backend $BACKEND_IMAGE_ID:$VERSION
-          docker tag frontend $FRONTEND_IMAGE_ID:$VERSION
-          docker tag gateway $GATEWAY_IMAGE_ID:$VERSION
-          docker push $BACKEND_IMAGE_ID:$VERSION
-          docker push $FRONTEND_IMAGE_ID:$VERSION
-          docker push $GATEWAY_IMAGE_ID:$VERSION
+          docker tag demo-backend $BACKEND_IMAGE_ID:${{ github.sha }}
+          docker tag demo-frontend $FRONTEND_IMAGE_ID:${{ github.sha }}
+          docker tag demo-gateway $GATEWAY_IMAGE_ID:${{ github.sha }}
+          docker push $BACKEND_IMAGE_ID:${{ github.sha }}
+          docker push $FRONTEND_IMAGE_ID:${{ github.sha }}
+          docker push $GATEWAY_IMAGE_ID:${{ github.sha }}
+
+      - name: Azure authentication backend
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_BACKEND  }}
+      - name: 'Deploy to Azure Web App for Backend'   
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME  }}
+          images: cunal/demo-backend:${{ github.sha }}
+
+      - name: Azure authentication gateway
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_GATEWAY  }}
+      - name: 'Deploy to Azure Web App for Gateway'   
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_GATEWAY_NAME  }}
+          images: cunal/demo-gateway:${{ github.sha }}
+
+      - name: Azure authentication frontend
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_FRONTEND  }}
+      - name: 'Deploy to Azure Web App for Frontend'   
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME  }}
+          images: cunal/demo-frontend:${{ github.sha }}
