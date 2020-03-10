@@ -1,6 +1,6 @@
 # Sample CRUD App
 
-![Build Status](https://github.com/CemalUnal/sample-crud-app/workflows/Docker/badge.svg?branch=master)
+![Build Status](https://github.com/CemalUnal/sample-crud-app/workflows/Build%20and%20Run/badge.svg)
 
 ## Quick Start with Docker
 
@@ -34,7 +34,7 @@ Start [backend](./backend):
 docker run -d --network=crud-app \
             --name backend \
             -e MONGODB_URI="mongodb://mongodb:27017/sample-app" \
-            -e JAVA_OPTS="-Dspring.profiles.active=deployment -Dserver.port=80 -Xms125m -Xmx250m" \
+            -e JAVA_OPTS="-Dspring.profiles.active=local-docker -Xms125m -Xmx250m" \
             --restart=on-failure \
             cunal/demo-backend:v0.0.2
 ```
@@ -43,14 +43,13 @@ Start [gateway](./gateway):
 ```bash
 docker run -p 9091:80 -d --network=crud-app \
             --name gateway \
-            -e SERVER_PORT=80 \
             -e DEMO_BACKEND_SERVICE="http://backend" \
-            -e JAVA_OPTS="-Dspring.profiles.active=deployment -Dserver.port=80 -Xms125m -Xmx250m" \
+            -e JAVA_OPTS="-Dspring.profiles.active=local-docker -Xms125m -Xmx250m" \
             -e REDIS_HOST=redis \
             -e REDIS_PORT=6379 \
             -e RATE_LIMIT_ENABLED=true \
             -e RATE_LIMIT_REPOSITORY=REDIS \
-            -e RATE_LIMIT=40 \
+            -e RATE_LIMIT=4 \
             -e RATE_LIMIT_REFRESH_INTERVAL=1 \
             --restart=on-failure \
             cunal/demo-gateway:v0.0.3
@@ -62,7 +61,6 @@ Start [frontend](./frontend):
 docker run -p 5000:5000 -d --network=crud-app \
             --name frontend \
             -e REACT_APP_BACKEND_URI=http://localhost:9091/api/demo-backend \
-            -e SERVER_PORT=5000 \
             --restart=on-failure \
             cunal/demo-frontend:v0.0.3
 ```

@@ -16,7 +16,7 @@ zuul:
   routes:
     backend:
       path: /demo-backend/**
-      url: http://localhost:32772/
+      url: http://localhost:8080/
   ratelimit:
     enabled: true
     repository: REDIS

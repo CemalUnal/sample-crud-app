@@ -60,39 +60,39 @@ jobs:
           FRONTEND_IMAGE_ID=$(echo "$FRONTEND_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
           GATEWAY_IMAGE_ID=$(echo "$GATEWAY_IMAGE_ID" | tr '[:upper:]' '[:lower:]')
 
-          docker tag demo-backend $BACKEND_IMAGE_ID:${{ github.sha }}
-          docker tag demo-frontend $FRONTEND_IMAGE_ID:${{ github.sha }}
-          docker tag demo-gateway $GATEWAY_IMAGE_ID:${{ github.sha }}
-          docker push $BACKEND_IMAGE_ID:${{ github.sha }}
-          docker push $FRONTEND_IMAGE_ID:${{ github.sha }}
-          docker push $GATEWAY_IMAGE_ID:${{ github.sha }}
+          docker tag demo-backend $BACKEND_IMAGE_ID:$VERSION
+          docker tag demo-frontend $FRONTEND_IMAGE_ID:$VERSION
+          docker tag demo-gateway $GATEWAY_IMAGE_ID:$VERSION
+          docker push $BACKEND_IMAGE_ID:$VERSION
+          docker push $FRONTEND_IMAGE_ID:$VERSION
+          docker push $GATEWAY_IMAGE_ID:$VERSION
 
-      - name: Azure authentication backend
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_BACKEND  }}
-      - name: 'Deploy to Azure Web App for Backend'   
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME  }}
-          images: cunal/demo-backend:${{ github.sha }}
+      # - name: Azure authentication backend
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS_BACKEND  }}
+      # - name: 'Deploy to Azure Web App for Backend'   
+      #   uses: azure/webapps-deploy@v2
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_BACKEND_NAME  }}
+      #     images: cunal/demo-backend:${{ github.sha }}
 
-      - name: Azure authentication gateway
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_GATEWAY  }}
-      - name: 'Deploy to Azure Web App for Gateway'   
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_GATEWAY_NAME  }}
-          images: cunal/demo-gateway:${{ github.sha }}
+      # - name: Azure authentication gateway
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS_GATEWAY  }}
+      # - name: 'Deploy to Azure Web App for Gateway'   
+      #   uses: azure/webapps-deploy@v2
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_GATEWAY_NAME  }}
+      #     images: cunal/demo-gateway:${{ github.sha }}
 
-      - name: Azure authentication frontend
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_FRONTEND  }}
-      - name: 'Deploy to Azure Web App for Frontend'   
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME  }}
-          images: cunal/demo-frontend:${{ github.sha }}
+      # - name: Azure authentication frontend
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS_FRONTEND  }}
+      # - name: 'Deploy to Azure Web App for Frontend'   
+      #   uses: azure/webapps-deploy@v2
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_FRONTEND_NAME  }}
+      #     images: cunal/demo-frontend:${{ github.sha }}
