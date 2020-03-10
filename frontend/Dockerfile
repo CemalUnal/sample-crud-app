@@ -27,6 +27,4 @@ WORKDIR /app
 COPY --from=builder /usr/frontend/app/startup.sh /
 COPY --from=builder /usr/frontend/app/build build/
 
-# USER frontend
-
 CMD /startup.sh

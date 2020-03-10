@@ -1,0 +1,29 @@
+server:
+  port: 80
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: gateway
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+
+zuul:
+  host:
+    connect-timeout-millis: ${HOST_CONNECT_TIMEOUT_MILLIS}
+  routes:
+    backend:
+      path: /demo-backend/**
+      url: ${DEMO_BACKEND_SERVICE}
+  ratelimit:
+    enabled: ${RATE_LIMIT_ENABLED}
+    repository: ${RATE_LIMIT_REPOSITORY}
+    policy-list:
+      backend:
+      - limit: ${RATE_LIMIT}
+        refresh-interval: ${RATE_LIMIT_REFRESH_INTERVAL}
+        type:
+          - user

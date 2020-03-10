@@ -57,8 +57,7 @@ Run newly built image:
 ```bash
 docker run -it --rm -p 8090:80 \
         --network=backend-network \
-        -e SERVER_PORT="80" \
-        -e JAVA_OPTS="-Dspring.profiles.active=deployment -Xms128m -Xmx256m" \
+        -e JAVA_OPTS="-Dspring.profiles.active=local-docker -Xms128m -Xmx256m" \
         -e MONGODB_URI="mongodb://mongodb:27017/mongo" \
         --name backend \
         backend
