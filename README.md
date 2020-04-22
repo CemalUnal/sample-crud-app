@@ -36,7 +36,7 @@ docker run -d --network=crud-app \
             -e MONGODB_URI="mongodb://mongodb:27017/sample-app" \
             -e JAVA_OPTS="-Dspring.profiles.active=local-docker -Xms125m -Xmx250m" \
             --restart=on-failure \
-            cunal/demo-backend:v0.0.2
+            cunal/demo-backend:51e393ef4be964e1c0a11cbc869d397a82700190
 ```
 
 Start [gateway](./gateway):
@@ -52,7 +52,7 @@ docker run -p 9091:80 -d --network=crud-app \
             -e RATE_LIMIT=4 \
             -e RATE_LIMIT_REFRESH_INTERVAL=1 \
             --restart=on-failure \
-            cunal/demo-gateway:v0.0.3
+            cunal/demo-gateway:51e393ef4be964e1c0a11cbc869d397a82700190
 ```
 
 Start [frontend](./frontend):
@@ -62,7 +62,7 @@ docker run -p 5000:5000 -d --network=crud-app \
             --name frontend \
             -e REACT_APP_BACKEND_URI=http://localhost:9091/api/demo-backend \
             --restart=on-failure \
-            cunal/demo-frontend:v0.0.3
+            cunal/demo-frontend:51e393ef4be964e1c0a11cbc869d397a82700190
 ```
 
 Check everything is working properly:
